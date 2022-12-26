@@ -117,10 +117,7 @@ public class User implements UserDetails {
                 '}';
     }
 
-//    public void addRoleToUser(Role role) {
-//        this.roles.add(role);
-//
-//    }
+
     public String showUserList(){
         StringJoiner sj = new StringJoiner(" ");
         for(Role role : roles) {

@@ -19,9 +19,6 @@ public class Role implements GrantedAuthority {
     private String role;
 
 
-//    @ManyToMany(mappedBy = "roles")
-//    @JsonIgnore
-//    private Set<User> users;
 
     public Role(){}
 
@@ -43,9 +40,7 @@ public class Role implements GrantedAuthority {
     public String getRole() {return role;}
     public void setRole(String role) {this.role = role;}
 
-//    public Set<User> getUsers() {return users;}
-//    public void setUsers(Set<User> users) {this.users = users;}
-//    @Override
+
     public String toString() {
         return role;
     }

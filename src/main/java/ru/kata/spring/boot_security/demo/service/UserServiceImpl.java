@@ -18,7 +18,7 @@ import java.util.Optional;
 import java.util.Set;
 
 @Service
-public class UserServiceImpl implements UserDetailsService {
+public class UserServiceImpl implements UserService, UserDetailsService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final RoleRepository roleRepository;
@@ -33,40 +33,37 @@ public class UserServiceImpl implements UserDetailsService {
 
 
     @Transactional
+    @Override
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
 
-//    @Transactional
-//    public void saveUser(User user) {
-//        Role roleUser = roleRepository.findRoleByRole("ROLE_USER");
-//        user.addRoleToUser(roleUser);
-//        user.setPassword(passwordEncoder.encode(user.getPassword()));
-//        userRepository.save(user);
-//    }
-@Transactional
-public void saveNewUser(User user, String role) {
-    Set<Role> roles = new HashSet<>();
-    if(role==null) {
-        if(roleRepository.findRoleByRole("ROLE_USER")==null) {
-            roleRepository.save(new Role("ROLE_USER"));
-            roles.add(roleRepository.findRoleByRole("ROLE_USER"));
-        } else {
-            Role newRole = roleRepository.findRoleByRole("ROLE_USER");
-            roles.add(newRole);
-        }
-    } else {
-        if(roleRepository.findRoleByRole(role)==null) {
-            roleRepository.save(new Role(role));
-        }
-        roles.add(roleRepository.findRoleByRole(role));
-    }
-    user.setRoles(roles);
-    user.setPassword(passwordEncoder.encode(user.getPassword()));
-    userRepository.save(user);
-}
 
     @Transactional
+    @Override
+    public void saveNewUser(User user, String role) {
+        Set<Role> roles = new HashSet<>();
+        if(role==null) {
+            if(roleRepository.findRoleByRole("ROLE_USER")==null) {
+                roleRepository.save(new Role("ROLE_USER"));
+                roles.add(roleRepository.findRoleByRole("ROLE_USER"));
+            } else {
+                Role newRole = roleRepository.findRoleByRole("ROLE_USER");
+                roles.add(newRole);
+            }
+        } else {
+            if(roleRepository.findRoleByRole(role)==null) {
+                roleRepository.save(new Role(role));
+            }
+            roles.add(roleRepository.findRoleByRole(role));
+        }
+        user.setRoles(roles);
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        userRepository.save(user);
+    }
+
+    @Transactional
+    @Override
     public void updateUser(User userUpdate, String roleUpdate) {
         User foundUser = userRepository.getById(userUpdate.getId());
         Set<Role> roles = new HashSet<>();
@@ -83,17 +80,20 @@ public void saveNewUser(User user, String role) {
     }
 
     @Transactional
+    @Override
     public void deleteUser(int id) {
         userRepository.deleteById(id);
     }
 
     @Transactional
+    @Override
     public User getUser(int id) {
         Optional<User> foundUser =userRepository.findById(id);
         return foundUser.orElse(null);
     }
 
     @Transactional
+    @Override
     public User getUserByName(String userName) {
         return userRepository.findByUsername(userName);
     }
