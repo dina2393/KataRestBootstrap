@@ -10,14 +10,8 @@ import java.security.Principal;
 
 @Controller
 public class UserController {
-    private UserService userService;
-    @Autowired
-    public UserController (UserService userService) {
-        this.userService = userService;
-    }
     @GetMapping("/user")
-    public String showUserInfo(Model model, Principal principal) {
-        model.addAttribute("currentUser",userService.getUserByName(principal.getName()));
+    public String userPage() {
         return "user-panel";
     }
     @GetMapping("/")

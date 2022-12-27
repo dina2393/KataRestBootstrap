@@ -41,40 +41,15 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Transactional
     @Override
-    public void saveNewUser(User user, String role) {
-        Set<Role> roles = new HashSet<>();
-        if(role==null) {
-            if(roleRepository.findRoleByRole("ROLE_USER")==null) {
-                roleRepository.save(new Role("ROLE_USER"));
-                roles.add(roleRepository.findRoleByRole("ROLE_USER"));
-            } else {
-                Role newRole = roleRepository.findRoleByRole("ROLE_USER");
-                roles.add(newRole);
-            }
-        } else {
-            if(roleRepository.findRoleByRole(role)==null) {
-                roleRepository.save(new Role(role));
-            }
-            roles.add(roleRepository.findRoleByRole(role));
-        }
-        user.setRoles(roles);
+    public void saveNewUser(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
     }
 
     @Transactional
     @Override
-    public void updateUser(User userUpdate, String roleUpdate) {
-        User foundUser = userRepository.getById(userUpdate.getId());
-        Set<Role> roles = new HashSet<>();
-
-        if (roleUpdate == null) {
-            roles = foundUser.getRoles();
-            userUpdate.setRoles(roles);
-        } else {
-            roles.add(roleRepository.findRoleByRole(roleUpdate));
-            userUpdate.setRoles(roles);
-        }
+    public void updateUser(User userUpdate, int id) {
+        userUpdate.setId(id);
         userUpdate.setPassword(passwordEncoder.encode(userUpdate.getPassword()));
         userRepository.save(userUpdate);
     }
@@ -96,6 +71,12 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Override
     public User getUserByName(String userName) {
         return userRepository.findByUsername(userName);
+    }
+    @Transactional
+    @Override
+    public Set<Role> getAllRoles() {
+        Set<Role> allRoles =  new HashSet<>(roleRepository.findAll());
+        return allRoles;
     }
 
 
